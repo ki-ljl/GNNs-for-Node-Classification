@@ -8,6 +8,7 @@ from torch.optim.lr_scheduler import StepLR
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GATConv
 from torch_geometric.utils import add_self_loops
+from tqdm import tqdm
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(os.getcwd())) + '\data'
@@ -59,7 +60,7 @@ def train(model, data):
     min_val_loss = 5
     best_model = None
     model.train()
-    for epoch in range(200):
+    for epoch in tqdm(range(200)):
         out = model(data)
         optimizer.zero_grad()
         loss = loss_function(out[data.train_mask], data.y[data.train_mask])

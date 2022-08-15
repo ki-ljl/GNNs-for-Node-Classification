@@ -10,6 +10,7 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import add_self_loops, degree
 from torch_scatter import scatter
+from tqdm import tqdm
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(os.getcwd())) + '\data'
@@ -96,7 +97,7 @@ def train(model):
     min_epochs = 10
     best_model = None
     min_val_loss = 5
-    for epoch in range(200):
+    for epoch in tqdm(range(200)):
         out = model(dataset)
         optimizer.zero_grad()
         loss = loss_function(out[dataset.train_mask], dataset.y[dataset.train_mask])
@@ -107,7 +108,8 @@ def train(model):
         if epoch + 1 >= min_epochs and val_loss < min_val_loss:
             min_val_loss = val_loss
             best_model = copy.deepcopy(model)
-        print('Epoch: {:3d} train_Loss: {:.5f} val_loss: {:.5f}'.format(epoch, loss.item(), val_loss))
+        tqdm.write('Epoch: {:3d} train_Loss: {:.5f} val_loss: {:.5f}'
+                   .format(epoch, loss.item(), val_loss))
         model.train()
 
     return best_model

@@ -7,6 +7,7 @@ from torch import nn
 
 from torch_geometric.datasets import DBLP
 from torch_geometric.nn import RGCNConv
+from tqdm import tqdm
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'DBLP')
@@ -67,7 +68,7 @@ def train():
     best_val_acc = 0
     final_best_acc = 0
     model.train()
-    for epoch in range(100):
+    for epoch in tqdm(range(100)):
         f = model(graph)
         loss = loss_function(f[train_mask], y[train_mask])
         optimizer.zero_grad()
@@ -79,8 +80,8 @@ def train():
         if epoch + 1 > min_epochs and val_acc > best_val_acc:
             best_val_acc = val_acc
             final_best_acc = test_acc
-        print('Epoch{:3d} train_loss {:.5f} val_acc {:.3f} test_acc {:.3f}'.
-              format(epoch, loss.item(), val_acc, test_acc))
+        tqdm.write('Epoch{:3d} train_loss {:.5f} val_acc {:.3f} test_acc {:.3f}'.
+                   format(epoch, loss.item(), val_acc, test_acc))
 
     return final_best_acc
 

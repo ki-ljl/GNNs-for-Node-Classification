@@ -6,6 +6,7 @@ import torch
 from torch_geometric.datasets import Planetoid, NELL
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv
+from tqdm import tqdm
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(os.getcwd())) + '\data'
@@ -58,7 +59,7 @@ def train(model, data, device):
     best_model = None
     min_epochs = 5
     model.train()
-    for epoch in range(200):
+    for epoch in tqdm(range(200)):
         out = model(data)
         optimizer.zero_grad()
         loss = loss_function(out[data.train_mask], data.y[data.train_mask])
@@ -70,7 +71,8 @@ def train(model, data, device):
         if val_loss < min_val_loss and epoch + 1 > min_epochs:
             min_val_loss = val_loss
             best_model = copy.deepcopy(model)
-        print('Epoch {:03d} train_loss {:.4f} val_loss {:.4f}'.format(epoch, loss.item(), val_loss))
+        tqdm.write('Epoch {:03d} train_loss {:.4f} val_loss {:.4f}'
+                   .format(epoch, loss.item(), val_loss))
 
     return best_model
 
