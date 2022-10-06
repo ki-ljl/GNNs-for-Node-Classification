@@ -32,13 +32,9 @@ class GAT(torch.nn.Module):
 
     def forward(self, data):
         x, edge_index = data.x, data.edge_index
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
-        x = F.dropout(x, training=self.training)
+        x = F.dropout(x, p=0.6, training=self.training)
+        x = F.relu(self.conv1(x, edge_index))
         x = self.conv2(x, edge_index)
-        x = F.relu(x)
-        x = F.dropout(x, training=self.training)
-        x = F.softmax(x, dim=1)
 
         return x
 

@@ -1,7 +1,6 @@
 import os
 
 import torch
-import torch.nn.functional as F
 from torch import nn
 from torch_geometric.datasets import DBLP
 from torch_geometric.nn import HANConv
@@ -29,7 +28,9 @@ class HAN(nn.Module):
         x_dict, edge_index_dict = data.x_dict, data.edge_index_dict
         x = self.conv1(x_dict, edge_index_dict)
         x = self.conv2(x, edge_index_dict)
-        x = F.softmax(x['author'], dim=1)
+        # x = F.softmax(x['author'], dim=1)
+        x = x['author']
+
         return x
 
 

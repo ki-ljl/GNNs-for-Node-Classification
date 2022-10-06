@@ -15,18 +15,14 @@ path = osp.join(osp.dirname(os.getcwd())) + '\data'
 class GCN(torch.nn.Module):
     def __init__(self, num_node_features, num_classes):
         super(GCN, self).__init__()
-        self.conv1 = GCNConv(num_node_features, 32)
-        self.conv2 = GCNConv(32, num_classes)
+        self.conv1 = GCNConv(num_node_features, 64)
+        self.conv2 = GCNConv(64, num_classes)
 
     def forward(self, data):
         x, edge_index = data.x, data.edge_index
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
-        x = F.dropout(x, training=self.training)
+        x = F.dropout(x, p=0.6, training=self.training)
+        x = F.relu(self.conv1(x, edge_index))
         x = self.conv2(x, edge_index)
-        x = F.relu(x)
-        x = F.dropout(x, training=self.training)
-        x = F.softmax(x, dim=1)
 
         return x
 
@@ -52,7 +48,7 @@ def get_val_loss(model, data):
     return loss.item()
 
 
-def train(model, data, device):
+def train(model, data):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=1e-4)
     loss_function = torch.nn.CrossEntropyLoss().to(device)
     min_val_loss = 5
@@ -92,7 +88,7 @@ def main():
         data, num_node_features, num_classes = load_data(name)
         print(data)
         model = GCN(num_node_features, num_classes).to(device)
-        model = train(model, data, device)
+        model = train(model, data)
         test(model, data)
 
 

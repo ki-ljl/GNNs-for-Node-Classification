@@ -55,7 +55,7 @@ class RGCN(nn.Module):
         x = self.conv1(homogeneous_data.x, edge_index, edge_type)
         x = self.conv2(x, edge_index, edge_type)
         x = x[:num_nodes]
-        x = F.softmax(x, dim=1)
+
         return x
 
 

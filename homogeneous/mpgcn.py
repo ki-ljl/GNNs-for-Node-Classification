@@ -64,8 +64,8 @@ class GCNConv(MessagePassing):
 class GCN(torch.nn.Module):
     def __init__(self, num_node_features, num_classes):
         super(GCN, self).__init__()
-        self.conv1 = GCNConv(num_node_features, 32)
-        self.conv2 = GCNConv(32, num_classes)
+        self.conv1 = GCNConv(num_node_features, 64)
+        self.conv2 = GCNConv(64, num_classes)
         self.dropout = nn.Dropout(p=0.3)
 
     def forward(self, data):

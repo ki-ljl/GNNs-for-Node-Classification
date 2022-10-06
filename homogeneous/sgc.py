@@ -74,8 +74,7 @@ class PyG_SGC(nn.Module):
 
     def forward(self, data):
         x, edge_index = data.x, data.edge_index
-        x = self.conv(x, edge_index)
-        x = F.softmax(x, dim=1)
+        x = F.relu(self.conv(x, edge_index))
 
         return x
 
