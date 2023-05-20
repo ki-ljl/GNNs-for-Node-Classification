@@ -2,9 +2,7 @@ import copy
 import os.path as osp
 
 import torch
-import torch.nn.functional as F
 from torch import nn
-
 from torch_geometric.datasets import DBLP
 from torch_geometric.nn import RGCNConv
 from tqdm import tqdm

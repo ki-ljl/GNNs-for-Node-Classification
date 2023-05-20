@@ -1,17 +1,16 @@
 import os
 import os.path as osp
 import random
+from time import perf_counter
 
 import numpy as np
 import torch
-from torch import nn
-import torch.nn.functional as F
-from time import perf_counter
 from torch.optim.lr_scheduler import StepLR
 from torch_geometric.datasets import Planetoid
 from torch_geometric.utils import add_self_loops, to_scipy_sparse_matrix, degree
-from torch_geometric.nn import SGConv
 from tqdm import tqdm
+
+from models import PyG_SGC, SGC
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(os.getcwd())) + '\data'
@@ -54,29 +53,6 @@ def setup_seed(seed):
 
 
 setup_seed(42)
-
-
-class SGC(nn.Module):
-    def __init__(self, in_feats, out_feats):
-        super(SGC, self).__init__()
-        self.softmax = nn.Softmax(dim=1)
-        self.w = nn.Linear(in_feats, out_feats)
-
-    def forward(self, x):
-        out = self.w(x)
-        return self.softmax(out)
-
-
-class PyG_SGC(nn.Module):
-    def __init__(self, in_feats, out_feats):
-        super(PyG_SGC, self).__init__()
-        self.conv = SGConv(in_feats, out_feats, K=k, cached=True)
-
-    def forward(self, data):
-        x, edge_index = data.x, data.edge_index
-        x = F.relu(self.conv(x, edge_index))
-
-        return x
 
 
 def train(model):
