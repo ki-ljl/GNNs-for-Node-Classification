@@ -58,7 +58,7 @@ class SGC(nn.Module):
 
     def forward(self, x):
         out = self.w(x)
-        return self.softmax(out)
+        return out
 
 
 class PyG_SGC(torch.nn.Module):
@@ -68,6 +68,6 @@ class PyG_SGC(torch.nn.Module):
 
     def forward(self, data):
         x, edge_index = data.x, data.edge_index
-        x = F.relu(self.conv(x, edge_index))
+        x = self.conv(x, edge_index)
 
         return x
